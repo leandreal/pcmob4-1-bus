@@ -18,7 +18,9 @@ export default function App() {
     .then((response) => response.json())
     .then((json) => {
       const myBus = json.services.filter((bus) => bus.no ==155)[0];
-    console.log(myBus);
+      console.log(myBus.next.time);
+      setArrival(myBus.next.time);
+      setLoading(false);
     });
   }
   
@@ -30,7 +32,7 @@ export default function App() {
     <View style={styles.container}>
       <Text style={styles.title}>Bus Arrival Time: </Text>
       
-      <Text style={styles.arrivalTime}>{loading ? <ActivityIndicator color={"grey"}/>: "Loaded"}</Text>
+      <Text style={styles.arrivalTime}>{loading ? <ActivityIndicator color={"grey"}/>: arrival}</Text>
       
       <TouchableOpacity style={styles.button} onPress={() => setLoading(true)}>
         <Text style={styles.buttonText}>Refresh!</Text>
