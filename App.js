@@ -6,32 +6,36 @@ import {
   TouchableOpacity, 
   ActivityIndicator,
   TextInput,
+  Keyboard,
+  ScrollView,
+
 } from "react-native";
 import { FontAwesome } from '@expo/vector-icons'; 
-//import { format } from "date-fns";//
-//import Moment from 'react-moment';//
 import moment from 'moment';
 
 
 export default function App() {
   const [loading, setLoading] = useState(true); 
   const [arrival, setArrival] = useState("");
+  const [duration, setDuration] = useState("");
+
   const [busstop, setBusStop] = useState("");
   const [busnumber, setBusNumber] = useState("");
   
 
-
-
   const BUSSTOP_URL = "https://arrivelah2.busrouter.sg/?id=83139";
   
+
+
   function loadBusStopData() {
     setLoading(true);
     fetch(BUSSTOP_URL)
     .then((response) => response.json())
-    .then((json) => {
-      const myBus = json.services.filter((bus) => bus.no == 155)[0];
+    .then((json) => {    
+      const myBus = json.services.filter((bus) => bus.no == 15)[0];
       console.log(myBus.next.time);
       setArrival(myBus.next.time);
+      setDuration(myBus.next.duration_ms);
       setLoading(false);
     });
   }
@@ -45,10 +49,9 @@ export default function App() {
   
 
   return (
-  
+    <ScrollView style={styles.scrollView}>
+    
     <View style={styles.container}>
-
-   
 
     <FontAwesome name="bus" size={72} color="navy" />
 
@@ -58,22 +61,25 @@ export default function App() {
 
       <TextInput
         style={styles.input}
-        onChangeText={setBusStop}
+        onChangeText={(value) => setBusStop(value)}
         value={busstop}
         placeholder="Enter Bus Stop No. Here"
         keyboardType="numeric"
+        onSubmitEditing={Keyboard.dismiss}
       />
 
       <Text style={styles.header}>Your Bus Number:</Text>
       
+
       <TextInput
         style={styles.input}
-        onChangeText={setBusNumber}
+        onChangeText={(value) => setBusNumber(value)}
         value={busnumber}
         placeholder="Enter Bus No. Here"
         keyboardType="numeric"
-        
+        onSubmitEditing={Keyboard.dismiss}
       />
+    
     
       <Text style={styles.header}>Next Bus Arriving In: </Text>
 
@@ -83,13 +89,27 @@ export default function App() {
         moment(arrival).format('YYYY MMM DD @ HH:MM')}
         </Text>
       
+        <Text style={styles.arrivalTime}>
+
+        {loading ? <ActivityIndicator color={"grey"}/>:
+        moment(duration).format('MM.SS ')}
+        mins 
+        </Text>
+
       <Text style={styles.header}>Subseq. Bus Arriving In: </Text>
 
       <Text style={styles.arrivalTime}>
      
         {loading ? <ActivityIndicator color={"grey"}/>:
         moment(arrival).format('YYYY MMM DD @ HH:MM')}
+        
+      </Text>
 
+      <Text style={styles.arrivalTime}>
+
+         {loading ? <ActivityIndicator color={"grey"}/>:
+        moment(duration).format('MM.SS ')}
+        mins
       </Text>
 
       <TouchableOpacity style={styles.button} onPress={() => setLoading(true)}>
@@ -97,24 +117,33 @@ export default function App() {
       </TouchableOpacity>      
     
     <Text><FontAwesome name="copyright" size={12} color="black"/> Leandreal</Text>
-
+   
     </View>
-
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    padding: 30,
+    backgroundColor: 'orange', 
+
+  },
+
   container: {
     flex: 1,
     backgroundColor: 'orange',
     alignItems: 'center',
     justifyContent: 'center',
-
+    marginVertical: 20,
+    paddingTop: 15,
+    
   },
 
   title: {
     fontSize: 32,
-    marginVertical: 10,
+    marginVertical: 20,
     justifyContent:'center',
     fontWeight: '600',
     color: 'navy',
@@ -129,7 +158,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "orchid",
     padding: 20,
-    marginVertical: 50,
+    marginVertical: 30,
     borderRadius: 10,
     borderWidth: 1,
   },
