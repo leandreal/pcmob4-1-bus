@@ -19,6 +19,9 @@ export default function App() {
   const [arrival, setArrival] = useState("");
   const [duration, setDuration] = useState("");
 
+  const [subarrival, setSubArrival] = useState("");
+  const [subduration, setSubDuration] = useState("");
+
   const [busstop, setBusStop] = useState("");
   const [busnumber, setBusNumber] = useState("");
   
@@ -32,7 +35,7 @@ export default function App() {
     fetch(BUSSTOP_URL)
     .then((response) => response.json())
     .then((json) => {    
-      const myBus = json.services.filter((bus) => bus.no == 150)[0];
+      const myBus = json.services.filter((bus) => bus.no == 155)[0];
       console.log(myBus.next.time);
       setArrival(myBus.next.time);
       setDuration(myBus.next.duration_ms);
@@ -46,6 +49,25 @@ export default function App() {
     return ()=> clearInterval(interval);
   }, []);
   
+
+  function loadBusStopData2() {
+    setLoading(true);
+    fetch(BUSSTOP_URL)
+    .then((response) => response.json())
+    .then((json) => {    
+      const myBus = json.services.filter((bus) => bus.no == 155)[0];
+      console.log(myBus.subsequent.time);
+      setSubArrival(myBus.subsequent.time);
+      setSubDuration(myBus.subsequent.duration_ms);
+      setLoading(false);
+    });
+  }
+  
+  useEffect(() => {
+    loadBusStopData2();
+    const interval = setInterval(loadBusStopData2, 5000);
+    return ()=> clearInterval(interval);
+  }, []);
   
 
   return (
@@ -86,14 +108,13 @@ export default function App() {
       <Text style={styles.arrivalTime}>
           
         {loading ? <ActivityIndicator color={"grey"}/>:
-        moment(arrival).format('YYYY MMM DD @ HH:MM')}
+        moment(arrival).format('YYYY MMM DD @ hh:mm')}
         </Text>
       
         <Text style={styles.arrivalTime}>(
 
         {loading ? <ActivityIndicator color={"grey"}/>:
-        moment(duration).format('MS ')}
-        mins) 
+        moment.duration(duration).minutes()} mins)
         </Text>
 
       <Text style={styles.header}>Subseq. Bus Arriving In: </Text>
@@ -101,15 +122,14 @@ export default function App() {
       <Text style={styles.arrivalTime}>
      
         {loading ? <ActivityIndicator color={"grey"}/>:
-        moment(arrival).format('YYYY MMM DD @ HH:MM')}
+        moment(subarrival).format('YYYY MMM DD @ hh:mm')}
         
       </Text>
 
       <Text style={styles.arrivalTime}>(
 
          {loading ? <ActivityIndicator color={"grey"}/>:
-        moment(duration).format('MS ')}
-        mins)
+        moment.duration(subduration).minutes()} mins)
       </Text>
 
       <TouchableOpacity style={styles.button} onPress={() => setLoading(true)}>
