@@ -32,7 +32,7 @@ export default function App() {
     fetch(BUSSTOP_URL)
     .then((response) => response.json())
     .then((json) => {    
-      const myBus = json.services.filter((bus) => bus.no == 15)[0];
+      const myBus = json.services.filter((bus) => bus.no == 150)[0];
       console.log(myBus.next.time);
       setArrival(myBus.next.time);
       setDuration(myBus.next.duration_ms);
@@ -89,11 +89,11 @@ export default function App() {
         moment(arrival).format('YYYY MMM DD @ HH:MM')}
         </Text>
       
-        <Text style={styles.arrivalTime}>
+        <Text style={styles.arrivalTime}>(
 
         {loading ? <ActivityIndicator color={"grey"}/>:
-        moment(duration).format('MM.SS ')}
-        mins 
+        moment(duration).format('MS ')}
+        mins) 
         </Text>
 
       <Text style={styles.header}>Subseq. Bus Arriving In: </Text>
@@ -105,11 +105,11 @@ export default function App() {
         
       </Text>
 
-      <Text style={styles.arrivalTime}>
+      <Text style={styles.arrivalTime}>(
 
          {loading ? <ActivityIndicator color={"grey"}/>:
-        moment(duration).format('MM.SS ')}
-        mins
+        moment(duration).format('MS ')}
+        mins)
       </Text>
 
       <TouchableOpacity style={styles.button} onPress={() => setLoading(true)}>
